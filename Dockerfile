@@ -10,6 +10,7 @@ COPY src src
 COPY requirements.txt ./
 COPY README.* ./
 COPY setup.* ./
+COPY MANIFEST.* ./
 
 RUN pip install -qq -r requirements.txt
 RUN pip install .
