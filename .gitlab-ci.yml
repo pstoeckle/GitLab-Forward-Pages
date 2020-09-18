@@ -6,8 +6,11 @@ pages:
     stage: pages
     image: python:3.7.6
     script:
-        - pip install -r requirements.txt
+        - pip install -qq -r requirements.txt
         - pip install .
+        - pip list
+        - ls ./src/gl_pages_forward/rsc
+        - ls /usr/local/lib/python3.7/site-packages/gl_pages_forward/
         - create-forward-pages -c ./src/gl_pages_forward/tests/config.yml
     artifacts:
         paths:
