@@ -40,7 +40,12 @@ def create_html_pages(config_file: str, output: str) -> None:
         if not isdir(output):
             mkdir(output)
         for file_name, url in configuration.items():
-            new_file = join(output, file_name) + ".html"
+            if file_name == "index":
+                new_file = join(output, "index.html")
+            else:
+                new_folder = join(output, file_name)
+                mkdir(new_folder)
+                new_file = join(new_folder, "index.html")
             _LOGGER.info(f"Create file {new_file}")
             content = template.render(new_url=url)
             with open(new_file, "w") as f_write:
