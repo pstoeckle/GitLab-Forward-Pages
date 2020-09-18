@@ -11,6 +11,7 @@ pages:
         - pip list
         - ls ./src/gl_pages_forward/rsc
         - ls /usr/local/lib/python3.7/site-packages/gl_pages_forward/
+        - ls /usr/local/lib/python3.7/site-packages/gl_pages_forward/rsc/
         - create-forward-pages -c ./src/gl_pages_forward/tests/config.yml
     artifacts:
         paths:
