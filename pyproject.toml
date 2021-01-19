@@ -18,4 +18,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-i4twitter = 'i4_twitter.main:main_group'
+create-forward-pages = 'gl_pages_forward.main:create_html_pages'
