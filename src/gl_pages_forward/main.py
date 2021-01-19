@@ -9,6 +9,7 @@ from typing import Dict
 from click import command, option
 from jinja2 import Environment, PackageLoader
 from ruamel.yaml import safe_load
+from gl_pages_forward import __version__
 
 basicConfig(level=INFO)
 
@@ -26,14 +27,9 @@ _OVERVIEW_TEMPLATE = _ENV.get_template("overview.html.j2")
 @command()
 def create_html_pages(config_file: str, output: str, base_url: str) -> None:
     """
-
-    Args:
-        config_file:
-        output:
-        base_url:
-    Returns:
-
+    Creates 'index.html's that forward to a specific URL.
     """
+    _print_version()
     if isfile(config_file):
         with open(config_file) as f_read:
             configuration: Dict[str, str] = safe_load(f_read.read())
@@ -56,10 +52,16 @@ def create_html_pages(config_file: str, output: str, base_url: str) -> None:
         if base_url != "":
             with open(join(output, "overview.html"), "w") as f_write:
                 f_write.write(
-                    _OVERVIEW_TEMPLATE.render(url=base_url, websites=configuration.items())
+                    _OVERVIEW_TEMPLATE.render(
+                        url=base_url, websites=configuration.items()
+                    )
                 )
     else:
         _LOGGER.critical(f"{config_file} is not a file!")
+
+
+def _print_version() -> None:
+    _LOGGER.info(f"i4_twitter {__version__}")
 
 
 if __name__ == "__main__":
