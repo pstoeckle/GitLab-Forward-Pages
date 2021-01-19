@@ -9,7 +9,9 @@ from typing import Dict
 from click import command, option
 from jinja2 import Environment, PackageLoader
 from ruamel.yaml import safe_load
+
 from gl_pages_forward import __version__
+from minify_html import minify as minify_html_minify
 
 basicConfig(level=INFO)
 
@@ -24,8 +26,17 @@ _OVERVIEW_TEMPLATE = _ENV.get_template("overview.html.j2")
 @option("--base_url", "-u", default="")
 @option("--output", "-o", default=join(".", "public"))
 @option("--config_file", "-c", default="config.yml")
+@option(
+    "--minify",
+    "-m",
+    is_flag=True,
+    default=False,
+    help="If this flag is set, the tool will minify the HTML.",
+)
 @command()
-def create_html_pages(config_file: str, output: str, base_url: str) -> None:
+def create_html_pages(
+    config_file: str, output: str, base_url: str, minify: bool
+) -> None:
     """
     Creates 'index.html's that forward to a specific URL.
     """
@@ -47,6 +58,8 @@ def create_html_pages(config_file: str, output: str, base_url: str) -> None:
                 new_file = join(new_folder, "index.html")
             _LOGGER.info(f"Create file {new_file}")
             content = _INDEX_TEMPLATE.render(new_url=url)
+            if minify:
+                content = minify_html_minify(content, minify_js=True, minify_css=False)
             with open(new_file, "w") as f_write:
                 f_write.write(content)
         if base_url != "":
