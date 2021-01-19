@@ -16,7 +16,7 @@ include:
 variables:
     ASDF_JAVA_VERSION: "11"
     ASDF_PYTHON_VERSION: "3.8.5"
-    CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE/frontend
+    CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE
     DAST_AUTH_EXCLUDE_URLS: http://vmpretschner35.in.tum.de/logout
     DAST_AUTH_URL: http://vmpretschner35.in.tum.de/login
     DAST_PASSWORD_FIELD: password
@@ -83,17 +83,18 @@ license_scanning:
     rules: *dependency-rules
 
 python:build:
-    cache: &python-cache
-        key: ${CI_COMMIT_REF_SLUG}
-        paths:
-            - ".venv"
-    script:
-        - poetry build
     artifacts:
         paths:
             - dist
         expire_in: 3 days
+    cache: &python-cache
+        key: ${CI_COMMIT_REF_SLUG}
+        paths:
+            - ".venv"
+    image: gitlab.lrz.de:5005/i4/software/docker-images/python3.9-poetry
     needs: []
+    script:
+        - poetry build
     stage: build
 
 python:deploy:
