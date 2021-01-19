@@ -1,6 +1,0 @@
--i https://pypi.org/simple
-click==7.1.2
-jinja2==2.11.2
-markupsafe==1.1.1
-ruamel-yaml==0.16.12
-ruamel.yaml.clib==0.2.2 ; platform_python_implementation == 'CPython' and python_version < '3.9'
