@@ -9,6 +9,7 @@ python = "^3.9"
 jinja2 = "*"
 click = "*"
 "ruamel.yaml" = "*"
+minify-html = "*"
 
 [tool.poetry.dev-dependencies]
 

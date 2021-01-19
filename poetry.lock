@@ -29,6 +29,14 @@ optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
 [[package]]
+name = "minify-html"
+version = "0.4.1"
+description = "Extremely fast and smart HTML + JS + CSS minifier"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "ruamel.yaml"
 version = "0.16.12"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
@@ -43,7 +51,7 @@ jinja2 = ["ruamel.yaml.jinja2 (>=0.2)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "6c243d137386b5515403e13c3bbe859e3f8f5e1da64c3cf16962292f6fb781f8"
+content-hash = "4e28325c9314a2446b2d18e741719ee4b1da90d0e760ed04dd3f6627cc9bcf47"
 
 [metadata.files]
 click = [
@@ -88,6 +96,17 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
+]
+minify-html = [
+    {file = "minify_html-0.4.1-cp37-cp37m-macosx_10_7_x86_64.whl", hash = "sha256:15a11a629fcb219102a6704ddd16415e1fe45fc30e26b019a8ea758c561f1bec"},
+    {file = "minify_html-0.4.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:5ed6c7b36b5bb8df84af3db583e11673cc5cbdef31801779076c266feec1d527"},
+    {file = "minify_html-0.4.1-cp37-none-win_amd64.whl", hash = "sha256:05481470f9bcd29922c9d8ddc1948bb2bcc0623fa436849dd479c57a23422ba1"},
+    {file = "minify_html-0.4.1-cp38-cp38-macosx_10_7_x86_64.whl", hash = "sha256:e9711a11b834e2483bdd97fb78c060df2c0bcaf047f98d613436315aaf976069"},
+    {file = "minify_html-0.4.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:a6d49daf514736a277e2381bee29268d6fcad7deea02cf03d0e28d7856024463"},
+    {file = "minify_html-0.4.1-cp38-none-win_amd64.whl", hash = "sha256:a61cd2e6a3ee10376cf503b3db3e122f63e9f647683352ac2dc3562beb6a60d1"},
+    {file = "minify_html-0.4.1-cp39-cp39-macosx_10_7_x86_64.whl", hash = "sha256:85dbf3cbe0ad0fd5412e91e9e8bbf139234cf29928f63509c35d8d59a0a3aebd"},
+    {file = "minify_html-0.4.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:4e129b079bebd84a6128e387239f9e5cd189f97346edaba6b76291f4cfdc3639"},
+    {file = "minify_html-0.4.1-cp39-none-win_amd64.whl", hash = "sha256:ef9d0ac7cba9ea989571de2d9c13b9e5ed5ce6529d8e9ae992382172ee31683c"},
 ]
 "ruamel.yaml" = [
     {file = "ruamel.yaml-0.16.12-py2.py3-none-any.whl", hash = "sha256:012b9470a0ea06e4e44e99e7920277edf6b46eee0232a04487ea73a7386340a5"},
