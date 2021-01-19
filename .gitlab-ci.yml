@@ -1,19 +1,126 @@
 stages:
-    - pages
+    - pre-analysis
+    - build
+    - test
     - deploy
+    - post-analysis
+    - publish
+    - dast
+    - cleanup
+
+include:
+    -   template: Dependency-Scanning.gitlab-ci.yml
+    -   template: License-Scanning.gitlab-ci.yml
+    -   template: SAST.gitlab-ci.yml
+    -   template: Secret-Detection.gitlab-ci.yml
+    -   template: Container-Scanning.gitlab-ci.yml
+
+variables:
+    ASDF_JAVA_VERSION: "11"
+    ASDF_PYTHON_VERSION: "3.8.5"
+    CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE/frontend
+    DAST_AUTH_EXCLUDE_URLS: http://vmpretschner35.in.tum.de/logout
+    DAST_AUTH_URL: http://vmpretschner35.in.tum.de/login
+    DAST_PASSWORD_FIELD: password
+    DAST_PASSWORD: test
+    DAST_SUBMIT_FIELD: submit
+    DAST_USERNAME_FIELD: username
+    DAST_USERNAME: test
+    DAST_WEBSITE: http://vmpretschner35.in.tum.de/login
+    DS_DEFAULT_ANALYZERS: "gemnasium-python,gemnasium"
+    LICENSE_FINDER_CLI_OPTS: '--recursive'
+    LM_JAVA_VERSION: "11"
+    LM_PYTHON_VERSION: "3"
+    SAST_DEFAULT_ANALYZERS: "bandit"
+    SAST_JAVA_VERSION: "11"
+    SEARCH_MAX_DEPTH: 13
+
+container_scanning:
+    stage: post-analysis
+    rules:
+        -   if: '$CI_COMMIT_BRANCH == "master"'
+        -   if: '$CI_COMMIT_BRANCH == "development"'
+            changes:
+                - "src/gl_pages_forward/**"
+                - .gitlab-ci.yml
+    needs:
+        - container:deploy
+
+sast:
+    stage: pre-analysis
+
+secret_detection:
+    stage: pre-analysis
+
+bandit-sast:
+    stage: pre-analysis
+    rules:
+        -   if: '$CI_COMMIT_BRANCH == "master"'
+        -   if: '$CI_COMMIT_BRANCH == "development"'
+            changes:
+                - "src/gl_pages_forward/**.py"
+                - .gitlab-ci.yml
+
+secret_detection_default_branch:
+    stage: pre-analysis
+    rules: &master-development-rules
+        -   if: '$CI_COMMIT_BRANCH == "master"'
+        -   if: '$CI_COMMIT_BRANCH == "development"'
+
+gemnasium-python-dependency_scanning:
+    stage: pre-analysis
+    rules: &dependency-rules
+        -   if: '$CI_COMMIT_BRANCH == "master"'
+        -   if: '$CI_COMMIT_BRANCH == "development"'
+            changes:
+                - requirements.txt
+                - .gitlab-ci.yml
+
+gemnasium-dependency_scanning:
+    stage: pre-analysis
+    rules: *dependency-rules
+
+license_scanning:
+    stage: pre-analysis
+    rules: *dependency-rules
+
+python:build:
+    cache: &python-cache
+        key: ${CI_COMMIT_REF_SLUG}
+        paths:
+            - ".venv"
+    script:
+        - poetry build
+    artifacts:
+        paths:
+            - dist
+        expire_in: 3 days
+    needs: []
+    stage: build
+
+python:deploy:
+    cache: *python-cache
+    image: gitlab.lrz.de:5005/i4/software/docker-images/python3.9-poetry
+    rules:
+        -   if: '$CI_COMMIT_BRANCH == "master"'
+    script:
+        - poetry config repositories.lrz https://gitlab.lrz.de/api/v4/projects/61463/packages/pypi
+        - poetry publish --build --repository lrz --username ${REGISTRY_USERNAME} --password ${REGISTRY_PASSWORD}
+    stage: deploy
+    needs:
+        - python:build
 
 pages:
     stage: pages
-    image: python:3.7.6
+    image: gitlab.lrz.de:5005/i4/software/docker-images/python3.9-poetry
     script:
-        - pip install -qq -r requirements.txt
-        - python setup.py install
-        - create-forward-pages -c ./src/gl_pages_forward/tests/config.yml
+        - poetry install
+        - poetry run create-forward-pages -c ./src/gl_pages_forward/tests/config.yml
     artifacts:
         paths:
         - public
 
-deploy:
+container:deploy:
   image: docker:18
   services:
   - docker:18-dind
