@@ -4,7 +4,7 @@ Main.
 from logging import INFO, basicConfig, getLogger
 from os import mkdir
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Mapping, Optional
 
 from click import echo
 from click.exceptions import Exit
@@ -23,9 +23,10 @@ _ENV = Environment(
 )
 _INDEX_TEMPLATE = _ENV.get_template("index.html.j2")
 _OVERVIEW_TEMPLATE = _ENV.get_template("overview.html.j2")
+_SECURITY_TEMPLATE = _ENV.get_template("security.txt.j2")
 
 
-def version_callback(value: bool) -> None:
+def _version_callback(value: bool) -> None:
     """
 
     Args:
@@ -41,10 +42,10 @@ def version_callback(value: bool) -> None:
 
 @app.command()
 def create_html_pages(
-    _: Optional[bool] = Option(None, "--version", "-v", callback=version_callback),
+    _: Optional[bool] = Option(None, "--version", "-v", callback=_version_callback),
     config_file: Path = Option(
         "config.yml",
-        "--config_file",
+        "--config-file",
         "-c",
         dir_okay=False,
         exists=True,
@@ -58,7 +59,7 @@ def create_html_pages(
         writable=True,
         resolve_path=True,
     ),
-    base_url: str = Option("", "--base_url", "-u"),
+    base_url: str = Option("", "--base-url", "-u"),
     minify: bool = Option(
         False,
         "--minify",
@@ -71,7 +72,7 @@ def create_html_pages(
     Creates 'index.html's that forward to a specific URL.
     """
     with config_file.open() as f_read:
-        configuration: Dict[str, str] = safe_load(f_read.read())
+        configuration: Mapping[str, str] = safe_load(f_read.read())
     if configuration is None or not isinstance(configuration, dict):
         _LOGGER.critical(f"Please provide a valid YAML file in {config_file}")
 
@@ -90,6 +91,11 @@ def create_html_pages(
             content = minify_html_minify(content, minify_js=True, minify_css=False)
         with open(new_file, "w") as f_write:
             f_write.write(content)
+    well_known = output.joinpath(".well-known")
+    mkdir(well_known)
+    well_known.joinpath("security.txt").write_text(
+        _SECURITY_TEMPLATE.render(base_url=base_url)
+    )
     if base_url != "":
         with output.joinpath("overview.html").open("w") as f_write:
             f_write.write(
@@ -98,4 +104,4 @@ def create_html_pages(
 
 
 if __name__ == "__main__":
-    create_html_pages()
+    app()
