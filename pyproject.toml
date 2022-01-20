@@ -8,9 +8,9 @@ authors = ["Patrick Stoeckle <patrick.stoeckle@tum.de>"]
 python = ">=3.9,<4.0"
 jinja2 = "*"
 "ruamel.yaml" = "*"
-minify-html = "*"
 typer = "^0.4.0"
 Jinja2 = "^3.0.3"
+minify-html = "0.7.2"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.931"

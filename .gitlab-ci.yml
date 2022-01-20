@@ -26,7 +26,6 @@ python:quality:
         -   if: '$CI_COMMIT_TAG'
     script:
         - poetry install
-        - poetry run flake8 --exit-zero --format gl-codeclimate --output-file flake8.json gl_pages_forward
         - poetry run mypy --cobertura-xml-report=. --junit-xml=mypy.xml --pretty gl_pages_forward
         - head -n 1 cobertura.xml
     stage: pre-analysis
