@@ -1,22 +1,46 @@
 stages:
     - pre-analysis
     - build
-    - test
     - deploy
-    - post-analysis
     - publish
+
+python:quality:
+    artifacts:
+        reports:
+            cobertura: cobertura.xml
+            junit: mypy.xml
+        expire_in: 10 days
+    cache: &python-cache
+        key: ${CI_COMMIT_REF_SLUG}
+        paths:
+            - ".venv"
+    coverage: '/line-rate="0.([0-9]{1,2})\d*"/'
+    image: gitlab.lrz.de:5005/i4/software/docker-images/python3.9-poetry
+    needs: [ ]
+    rules: &python-rules
+        -   changes:
+                - "gl_pages_forward/**.py"
+                - .gitlab-ci.yml
+        -   if: '$CI_COMMIT_BRANCH == "main"'
+        -   if: '$CI_COMMIT_BRANCH == "development"'
+        -   if: '$CI_COMMIT_TAG'
+    script:
+        - poetry install
+        - poetry run flake8 --exit-zero --format gl-codeclimate --output-file flake8.json gl_pages_forward
+        - poetry run mypy --cobertura-xml-report=. --junit-xml=mypy.xml --pretty gl_pages_forward
+        - head -n 1 cobertura.xml
+    stage: pre-analysis
 
 python:build:
     artifacts:
         paths:
             - dist
         expire_in: 3 days
-    cache: &python-cache
-        key: ${CI_COMMIT_REF_SLUG}
-        paths:
-            - ".venv"
+    cache: *python-cache
+    rules: *python-rules
     image: gitlab.lrz.de:5005/i4/software/docker-images/python3.9-poetry
-    needs: []
+    needs:
+        - python:quality
     script:
         - poetry build
     stage: build
@@ -64,7 +88,7 @@ pages:
     image: gitlab.lrz.de:5005/i4/software/docker-images/python3.9-poetry
     script:
         - poetry install
-        - poetry run create-forward-pages --config_file ./src/gl_pages_forward/tests/config.yml
+        - poetry run create-forward-pages --config-file gl_pages_forward/tests/config.yml
     artifacts:
         paths:
         - public
