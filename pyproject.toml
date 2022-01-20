@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gl-pages-forward"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Patrick Stoeckle <patrick.stoeckle@tum.de>"]
 
@@ -19,4 +19,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-create-forward-pages = 'gl_pages_forward.main:create_html_pages'
+create-forward-pages = 'gl_pages_forward.main:app'
