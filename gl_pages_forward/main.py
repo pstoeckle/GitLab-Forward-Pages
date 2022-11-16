@@ -23,7 +23,6 @@ _ENV = Environment(
 )
 _INDEX_TEMPLATE = _ENV.get_template("index.html.j2")
 _OVERVIEW_TEMPLATE = _ENV.get_template("overview.html.j2")
-_SECURITY_TEMPLATE = _ENV.get_template("security.txt.j2")
 
 
 def _version_callback(value: bool) -> None:
@@ -91,11 +90,6 @@ def create_html_pages(
             content = minify_html_minify(content, minify_js=True, minify_css=False)
         with open(new_file, "w") as f_write:
             f_write.write(content)
-    well_known = output.joinpath(".well-known")
-    mkdir(well_known)
-    well_known.joinpath("security.txt").write_text(
-        _SECURITY_TEMPLATE.render(base_url=base_url)
-    )
     if base_url != "":
         with output.joinpath("overview.html").open("w") as f_write:
             f_write.write(
